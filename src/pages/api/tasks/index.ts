@@ -1,12 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
 import tasksData from "../../../../data/task.json";
 
-const tasks = tasksData as {
+// Ajusta la interfaz para reflejar nuevos campos
+interface Task {
   id: number;
   title: string;
   description?: string;
-}[];
+  category?: string;
+  dueDate?: string;
+  priority?: string;
+  status?: string;
+  tags?: string[];
+}
+
+const tasks = tasksData as Task[];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
@@ -14,15 +21,29 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (req.method === "POST") {
-    const { title, description } = req.body;
+    // Extrae los campos que quieras manejar
+    // Si hay algunos obligatorios, puedes validarlos
+    const { title, description, category, dueDate, priority, status, tags } =
+      req.body;
+
     if (!title) {
       return res.status(400).json({ error: "El título es obligatorio" });
     }
 
     const newId = tasks.length ? tasks[tasks.length - 1].id + 1 : 1;
-    const newTask = { id: newId, title, description };
-    tasks.push(newTask);
+    // Construye el nuevo objeto Task con todos los campos
+    const newTask: Task = {
+      id: newId,
+      title,
+      description: description || "",
+      category: category || "Entrenamiento", // puedes poner un valor por defecto
+      dueDate: dueDate || "",
+      priority: priority || "Media",
+      status: status || "Pendiente",
+      tags: tags || [],
+    };
 
+    tasks.push(newTask);
     return res.status(201).json(newTask);
   }
 

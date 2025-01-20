@@ -1,4 +1,32 @@
 [
-  { "id": 1, "title": "Tarea 1", "description": "Descripción 1" },
-  { "id": 2, "title": "Tarea 2", "description": "Descripción 2" }
+  {
+    "id": 1,
+    "title": "Entrenamiento de larga distancia",
+    "description": "Correr 15 km a ritmo medio en asfalto",
+    "category": "Entrenamiento",
+    "dueDate": "2025-02-01",
+    "priority": "Alta",
+    "status": "Pendiente",
+    "tags": ["carrera", "resistencia"]
+  },
+  {
+    "id": 2,
+    "title": "Plan de nutrición pre-carrera",
+    "description": "Consumir carbohidratos complejos y mantenerse hidratado",
+    "category": "Nutrición",
+    "dueDate": "2025-02-03",
+    "priority": "Media",
+    "status": "En Progreso",
+    "tags": ["nutrición", "plan"]
+  },
+  {
+    "id": 3,
+    "title": "Revisión de equipamiento",
+    "description": "Verificar zapatillas, calcetines de compresión y cronómetro",
+    "category": "Equipamiento",
+    "dueDate": "2025-02-04",
+    "priority": "Baja",
+    "status": "Pendiente",
+    "tags": ["equipo", "material"]
+  }
 ]
