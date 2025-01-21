@@ -3,9 +3,9 @@ import { useState } from "react";
 interface UseApiRequestOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   headers?: Record<string, string>;
-  params?: Record<string, any>; // Query parameters for GET requests
-  body?: any; // Body for POST, PUT, etc.
-  path?: string; // Path params to be appended to the endpoint
+  params?: Record<string, any>;
+  body?: any;
+  path?: string;
 }
 
 export const useApiRequest = <TData = any>(
@@ -28,13 +28,12 @@ export const useApiRequest = <TData = any>(
       headers = {},
       params,
       body,
-      path = "", // Path params default to empty string
+      path = "",
     } = {
       ...defaultOptions,
       ...overrideOptions,
     };
 
-    // Build query parameters for GET requests
     const queryParams = params
       ? "?" +
         new URLSearchParams(
@@ -45,7 +44,6 @@ export const useApiRequest = <TData = any>(
         ).toString()
       : "";
 
-    // Combine base endpoint with path params and query params
     const url = `${endpoint}${path}${queryParams}`;
 
     try {

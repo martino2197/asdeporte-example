@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -6,11 +6,8 @@ import {
   DialogActions,
   TextField,
   Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   CircularProgress,
+  MenuItem,
   Autocomplete,
 } from "@mui/material";
 import {
@@ -21,90 +18,65 @@ import { useApiRequest } from "@/hooks/useApiRequest";
 import { useDispatch } from "react-redux";
 import { fetchTasks } from "@/redux/thunks/tasks.thunks";
 import { AppDispatch } from "@/redux/store";
+import { Task } from "@/components/TasksModule/utils/types";
+import { useForm, Controller } from "react-hook-form";
+import {
+  CATEGORIES,
+  DEFAULT_TASK,
+  PRIORITIES,
+  STATUSES,
+  TAG_OPTIONS,
+} from "./utils/constants";
 
 interface EditTaskDialogProps {
   open: boolean;
-  editingTask: any | null;
+  editingTask: Task | null;
   handleCloseEdit: () => void;
 }
 
-// Constantes para categorías, prioridades y estados
-const CATEGORIES = ["Trabajo", "Personal", "Estudios", "Otro"];
-const PRIORITIES = ["Baja", "Media", "Alta"];
-const STATUSES = ["Pendiente", "En Progreso", "Completado"];
-const TAG_OPTIONS = ["Urgente", "Importante", "Opcional", "Revisar"];
+const getDefaultTask = (): Task => ({ ...DEFAULT_TASK });
 
-export default function EditTaskDialog({
+const EditTaskDialog: React.FC<EditTaskDialogProps> = ({
   open,
   editingTask,
   handleCloseEdit,
-}: EditTaskDialogProps) {
+}) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [task, setTask] = useState<any>({
-    title: "",
-    description: "",
-    category: "",
-    dueDate: "",
-    priority: "Media",
-    status: "Pendiente",
-    tags: [],
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Task>({
+    defaultValues: getDefaultTask(),
   });
 
   const isEditing = Boolean(editingTask);
 
   const { executeRequest: createTask, loading: creatingTask } = useApiRequest(
     createTaskUrl(),
-    {
-      method: "POST",
-    }
+    { method: "POST" }
   );
 
   const { executeRequest: updateTask, loading: updatingTask } = useApiRequest(
-    isEditing ? updateTaskUrl(editingTask?.id) : "",
-    {
-      method: "PUT",
-    }
+    isEditing ? updateTaskUrl(editingTask?.id as number) : "",
+    { method: "PUT" }
   );
 
   useEffect(() => {
-    if (editingTask) {
-      setTask(editingTask);
-    } else {
-      setTask({
-        title: "",
-        description: "",
-        category: "",
-        dueDate: "",
-        priority: "Media",
-        status: "Pendiente",
-        tags: [],
-      });
-    }
-  }, [editingTask]);
+    reset(editingTask || getDefaultTask());
+  }, [editingTask, reset]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setTask((prev: any) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = async () => {
+  const onSubmit = async (data: Task) => {
     try {
-      if (isEditing) {
-        const response = await updateTask({ body: task });
-        if (response?.data) {
-          console.log("Tarea actualizada:", response.data);
-          handleCloseEdit();
-          dispatch(fetchTasks());
-        }
-      } else {
-        const response = await createTask({ body: task });
-        if (response?.data) {
-          console.log("Tarea creada:", response.data);
-          handleCloseEdit();
-          dispatch(fetchTasks());
-        }
+      const response = isEditing
+        ? await updateTask({ body: data })
+        : await createTask({ body: data });
+      if (response?.data) {
+        dispatch(fetchTasks());
+        reset(getDefaultTask());
+        handleCloseEdit();
       }
     } catch (error) {
       console.error("Error al guardar la tarea:", error);
@@ -112,113 +84,181 @@ export default function EditTaskDialog({
   };
 
   return (
-    <Dialog open={open} onClose={handleCloseEdit} fullWidth maxWidth="sm">
-      <DialogTitle>{isEditing ? "Editar Tarea" : "Nueva Tarea"}</DialogTitle>
-      <DialogContent className="space-y-4">
-        <TextField
-          label="Título"
+    <Dialog
+      open={open}
+      onClose={() => {
+        reset(getDefaultTask());
+        handleCloseEdit();
+      }}
+      fullWidth
+      maxWidth="sm"
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-description"
+    >
+      <DialogTitle id="dialog-title">
+        {isEditing ? "Editar Tarea" : "Nueva Tarea"}
+      </DialogTitle>
+      <DialogContent id="dialog-description" className="space-y-4">
+        <Controller
           name="title"
-          value={task.title}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Descripción"
-          name="description"
-          value={task.description}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          multiline
-          rows={3} // Configura que sea de 3 líneas
-        />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Categoría</InputLabel>
-          <Select
-            name="category"
-            value={task.category}
-            onChange={(e) =>
-              setTask((prev: any) => ({ ...prev, category: e.target.value }))
-            }
-          >
-            {CATEGORIES.map((category) => (
-              <MenuItem key={category} value={category}>
-                {category}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          type="date"
-          label="Fecha"
-          name="dueDate"
-          value={task.dueDate}
-          onChange={handleChange}
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-          margin="normal"
-        />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Prioridad</InputLabel>
-          <Select
-            name="priority"
-            value={task.priority}
-            onChange={(e) =>
-              setTask((prev: any) => ({ ...prev, priority: e.target.value }))
-            }
-          >
-            {PRIORITIES.map((priority) => (
-              <MenuItem key={priority} value={priority}>
-                {priority}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Estado</InputLabel>
-          <Select
-            name="status"
-            value={task.status}
-            onChange={(e) =>
-              setTask((prev: any) => ({ ...prev, status: e.target.value }))
-            }
-          >
-            {STATUSES.map((status) => (
-              <MenuItem key={status} value={status}>
-                {status}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Autocomplete
-          multiple
-          options={TAG_OPTIONS}
-          value={task.tags}
-          onChange={(_, newValue) =>
-            setTask((prev: any) => ({ ...prev, tags: newValue }))
-          }
-          renderInput={(params) => (
+          control={control}
+          rules={{ required: "El título es obligatorio", maxLength: 100 }}
+          render={({ field }) => (
             <TextField
-              {...params}
-              label="Tags"
-              placeholder="Selecciona o añade etiquetas"
+              {...field}
+              label="Título"
               fullWidth
+              margin="normal"
+              error={!!errors.title}
+              helperText={errors.title?.message}
             />
           )}
-          fullWidth
+        />
+
+        <Controller
+          name="description"
+          control={control}
+          rules={{
+            maxLength: { value: 300, message: "Máximo 300 caracteres" },
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Descripción"
+              fullWidth
+              margin="normal"
+              multiline
+              rows={3}
+              error={!!errors.description}
+              helperText={errors.description?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="category"
+          control={control}
+          rules={{ required: "Selecciona una categoría" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              select
+              label="Categoría"
+              fullWidth
+              margin="normal"
+              error={!!errors.category}
+              helperText={
+                errors.category?.message || "Selecciona una categoría"
+              }
+            >
+              {CATEGORIES.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+
+        <Controller
+          name="dueDate"
+          control={control}
+          rules={{
+            required: "La fecha es obligatoria",
+            validate: (value) =>
+              new Date(value) >= new Date() || "La fecha debe ser futura",
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              type="date"
+              label="Fecha"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              margin="normal"
+              error={!!errors.dueDate}
+              helperText={errors.dueDate?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="priority"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              select
+              label="Prioridad"
+              fullWidth
+              margin="normal"
+              helperText="Selecciona la prioridad de la tarea"
+            >
+              {PRIORITIES.map((priority) => (
+                <MenuItem key={priority} value={priority}>
+                  {priority}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+
+        <Controller
+          name="status"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              select
+              label="Estado"
+              fullWidth
+              margin="normal"
+              helperText="Selecciona el estado de la tarea"
+            >
+              {STATUSES.map((status) => (
+                <MenuItem key={status} value={status}>
+                  {status}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+
+        <Controller
+          name="tags"
+          control={control}
+          render={({ field }) => (
+            <Autocomplete
+              multiple
+              options={TAG_OPTIONS}
+              value={field.value}
+              onChange={(_, newValue) => field.onChange(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Etiquetas"
+                  placeholder="Selecciona o añade etiquetas"
+                  fullWidth
+                />
+              )}
+            />
+          )}
         />
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={handleCloseEdit}
+          onClick={() => {
+            reset(getDefaultTask());
+            handleCloseEdit();
+          }}
           variant="text"
           disabled={creatingTask || updatingTask}
+          aria-label="Cancelar edición"
         >
           Cancelar
         </Button>
         <Button
-          onClick={handleSave}
+          onClick={handleSubmit(onSubmit)}
           variant="contained"
           disabled={creatingTask || updatingTask}
           startIcon={
@@ -226,10 +266,13 @@ export default function EditTaskDialog({
               <CircularProgress size={20} />
             ) : undefined
           }
+          aria-label="Guardar tarea"
         >
           Guardar
         </Button>
       </DialogActions>
     </Dialog>
   );
-}
+};
+
+export default EditTaskDialog;

@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { getTasksUrl } from "@/components/TasksModule/utils/services";
 
-// Manejo de errores
 const handleApiError = (error: any, rejectWithValue: any) => {
   return rejectWithValue({
     message: error?.message || "Unknown error occurred",
@@ -9,7 +8,6 @@ const handleApiError = (error: any, rejectWithValue: any) => {
   });
 };
 
-// Thunk para obtener las tareas
 export const fetchTasks = createAsyncThunk(
   "tasks/fetchTasks",
   async (_, { rejectWithValue }) => {
@@ -32,7 +30,7 @@ export const fetchTasks = createAsyncThunk(
         throw new Error("Response is not an array.");
       }
 
-      return data; // Devuelve la lista de tareas al reducer
+      return data;
     } catch (error: any) {
       return handleApiError(error, rejectWithValue);
     }

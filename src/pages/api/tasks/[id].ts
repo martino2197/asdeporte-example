@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import tasksData from "../../../../data/task.json";
-
-// Ajusta también la interfaz aquí, o colócala en un archivo compartido
 interface Task {
   id: number;
   title: string;
@@ -29,11 +27,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (req.method === "PUT" || req.method === "PATCH") {
-    // Extrae los campos que quieras actualizar
     const { title, description, category, dueDate, priority, status, tags } =
       req.body;
 
-    // Actualiza solo los campos que vengan en el body
     if (title !== undefined) tasks[taskIndex].title = title;
     if (description !== undefined) tasks[taskIndex].description = description;
     if (category !== undefined) tasks[taskIndex].category = category;

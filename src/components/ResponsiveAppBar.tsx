@@ -9,7 +9,6 @@ import {
   Menu,
   Container,
   Avatar,
-  Button,
   Tooltip,
   MenuItem,
 } from "@mui/material";
@@ -59,7 +58,7 @@ export default function ResponsiveAppBar() {
             </Link>
           </Box>
 
-          {session ? (
+          {session && (
             <Box className="flex-grow-0">
               <Tooltip title="Abrir menú de usuario" arrow>
                 <IconButton onClick={handleOpenUserMenu} className="p-0">
@@ -89,12 +88,6 @@ export default function ResponsiveAppBar() {
                   </MenuItem>
                 ))}
               </Menu>
-            </Box>
-          ) : (
-            <Box className="flex-grow-0">
-              <Button color="inherit" component={Link} href="/">
-                Login
-              </Button>
             </Box>
           )}
         </Toolbar>

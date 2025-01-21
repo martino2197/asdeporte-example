@@ -8,7 +8,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
-import GitHubIcon from "@mui/icons-material/GitHub";
 import Image from "next/image";
 import asdeporteLogoSVG from "@/assets/asdeporte-logo-black.svg";
 
@@ -57,17 +56,6 @@ const HomePage: NextPage = () => {
               className="capitalize"
             >
               Iniciar sesión con Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              color="secondary"
-              startIcon={<GitHubIcon />}
-              onClick={() => signIn("github")}
-              size="large"
-              className="capitalize"
-            >
-              Iniciar sesión con GitHub
             </Button>
           </div>
         </CardContent>

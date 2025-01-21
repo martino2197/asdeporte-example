@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import tasksData from "../../../../data/task.json";
 
-// Ajusta la interfaz para reflejar nuevos campos
 interface Task {
   id: number;
   title: string;
@@ -21,8 +20,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (req.method === "POST") {
-    // Extrae los campos que quieras manejar
-    // Si hay algunos obligatorios, puedes validarlos
     const { title, description, category, dueDate, priority, status, tags } =
       req.body;
 
@@ -31,7 +28,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const newId = tasks.length ? tasks[tasks.length - 1].id + 1 : 1;
-    // Construye el nuevo objeto Task con todos los campos
+
     const newTask: Task = {
       id: newId,
       title,

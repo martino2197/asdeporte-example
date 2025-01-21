@@ -29,7 +29,7 @@ const TaskList: React.FC<TaskListProps> = ({ onEdit }) => {
   );
 
   const { executeRequest: removeTask, loading: deletingTask } = useApiRequest(
-    deleteTaskUrl(), // Base endpoint
+    deleteTaskUrl(),
     { method: "DELETE" }
   );
 
