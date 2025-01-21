@@ -13,35 +13,22 @@ import {
   Tooltip,
   MenuItem,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import AdbIcon from "@mui/icons-material/Adb";
+import Image from "next/image";
+import asdeporteLogoSVG from "@/assets/asdeporte-logo-white.svg";
 import Link from "next/link";
-
-const pages = [
-  { label: "Home", href: "/" },
-  { label: "Tareas", href: "/tasks" },
-];
 
 const userOptions = ["Perfil", "Cerrar sesión"];
 
 export default function ResponsiveAppBar() {
   const { data: session } = useSession();
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
+
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
@@ -60,69 +47,16 @@ export default function ResponsiveAppBar() {
     <AppBar position="static" color="primary">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon className="hidden md:inline-block mr-2" />
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            className="hidden md:inline-block mr-4 font-bold tracking-[.3rem]"
-          ></Typography>
-
-          <Box className="flex flex-grow md:hidden">
-            <IconButton
-              size="large"
-              aria-label="Open nav menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-              transformOrigin={{ vertical: "top", horizontal: "left" }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              keepMounted
-              className="md:hidden"
-            >
-              {pages.map((page) => (
-                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">
-                    <Link href={page.href}>{page.label}</Link>
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-
-          <AdbIcon className="md:hidden mr-2" />
-          <Typography
-            variant="h5"
-            noWrap
-            component="div"
-            className="flex md:hidden flex-grow font-bold tracking-[.3rem]"
-          >
-            APP LOGO
-          </Typography>
-
-          <Box className="hidden md:flex flex-grow">
-            {pages.map((page) => (
-              <Button
-                key={page.label}
-                onClick={handleCloseNavMenu}
-                component={Link}
-                href={page.href}
-                className="my-2"
-                variant="text"
-                color="inherit"
-              >
-                {page.label}
-              </Button>
-            ))}
+          <Box className="flex-grow flex justify-center">
+            <Link href="/" passHref>
+              <Image
+                src={asdeporteLogoSVG}
+                alt="Asdeporte Logo"
+                width={120}
+                height={50}
+                className="cursor-pointer"
+              />
+            </Link>
           </Box>
 
           {session ? (
@@ -140,7 +74,6 @@ export default function ResponsiveAppBar() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
                 keepMounted
-                className="mt-[45px]"
               >
                 <MenuItem disabled>
                   <Typography className="font-bold text-center">

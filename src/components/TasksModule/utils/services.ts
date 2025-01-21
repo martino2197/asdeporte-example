@@ -1,5 +1,7 @@
-// Base URL para la API de tareas
-const BASE_TASKS_URL = "/api/tasks";
+// Base URL para la API de tareas, utilizando NEXTAUTH_URL del entorno
+const BASE_TASKS_URL = `${
+  process.env.NEXTAUTH_URL || "http://localhost:3000"
+}/api/tasks`;
 
 // Función para obtener todas las tareas
 export const getTasksUrl = () => BASE_TASKS_URL;
@@ -8,7 +10,7 @@ export const getTasksUrl = () => BASE_TASKS_URL;
 export const getTaskDetailsUrl = (taskId: number) =>
   `${BASE_TASKS_URL}/${taskId}`;
 
-// Función para crear una nueva tarea (puede reutilizar la base)
+// Función para crear una nueva tarea
 export const createTaskUrl = () => BASE_TASKS_URL;
 
 // Función para actualizar una tarea específica
