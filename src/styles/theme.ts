@@ -1,7 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 import { toggleButtonClasses } from "@mui/material";
 
-// 1. Extender definición de Typography si quieres añadir una variante custom "t1text"
 declare module "@mui/material/styles" {
   interface TypographyVariants {
     t1text: React.CSSProperties;
@@ -112,14 +111,6 @@ const theme = createTheme({
             border: "1px solid #C3C3C3",
           },
         },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        // root: {
-        //   borderRadius: 8,
-        //   boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
-        // },
       },
     },
     MuiToggleButton: {
