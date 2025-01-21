@@ -1,7 +1,5 @@
 // Base URL para la API de tareas, utilizando NEXTAUTH_URL del entorno
-const BASE_TASKS_URL = `${
-  process.env.NEXTAUTH_URL || "http://localhost:3000"
-}/api/tasks`;
+const BASE_TASKS_URL = `${process.env.NEXTAUTH_URL}/api/tasks`;
 
 // Función para obtener todas las tareas
 export const getTasksUrl = () => BASE_TASKS_URL;
