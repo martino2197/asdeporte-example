@@ -1,7 +1,7 @@
-// router/PrivateRoute.tsx
 import { ReactNode, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { CircularProgress, Box } from "@mui/material";
 
 interface PrivateRouteProps {
   children: ReactNode;
@@ -26,7 +26,16 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
   }, [status, isLoginPage, router]);
 
   if (status === "loading") {
-    return <p>Cargando sesión...</p>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return <>{children}</>;
